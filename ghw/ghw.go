@@ -19,7 +19,7 @@ type RouterGroup struct {
 	prefix      string
 	middlewares []HandlerFunc // support middleware
 	parent      *RouterGroup  // support nesting
-	engine      *Engine       // all groups share a Engine instance
+	engine      *Engine       // all groups share  Engine instance
 }
 
 // New 是ghw.Engine 构造函数
