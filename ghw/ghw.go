@@ -30,7 +30,7 @@ func New() *Engine {
 	return engine
 }
 
-// Group 定义了创建一个新的路由组
+// Group 定义了创建一个新的路由组方法
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
 	newGroup := &RouterGroup{

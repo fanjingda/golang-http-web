@@ -4,11 +4,15 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"net/http"
+	"io"
+	"os"
 )
+
+// use zap.logger middlewares replace default log library
 
 var sugarLogger *zap.SugaredLogger
 
+// getLogWriter Log cutting and archiving using Lumberjack
 func getLogWriter() zapcore.WriteSyncer {
 	lumberJackLogger := &lumberjack.Logger{
 		Filename:   "./test.log",
@@ -17,9 +21,12 @@ func getLogWriter() zapcore.WriteSyncer {
 		MaxAge:     30,
 		Compress:   false,
 	}
-	return zapcore.AddSync(lumberJackLogger)
+	file := io.MultiWriter(lumberJackLogger, os.Stdout)
+	// Where does the specified log go
+	return zapcore.AddSync(file)
 }
 
+// Logger  初始化函数
 func Logger() {
 	writeSyncer := getLogWriter()
 	encoder := getEncoder()
@@ -29,24 +36,9 @@ func Logger() {
 	sugarLogger = logger.Sugar()
 }
 
-func simpleHttpGet(url string) {
-	resp, err := http.Get(url)
-	if err != nil {
-		sugarLogger.Error(
-			"Error fetching url",
-			zap.String("url", url),
-			zap.Error(err))
-	} else {
-		sugarLogger.Info("Success",
-			zap.String("statusCode", resp.Status),
-			zap.String("url", url))
-		resp.Body.Close()
-	}
-}
-
 func getEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	return zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+	return zapcore.NewConsoleEncoder(encoderConfig)
 }
