@@ -7,7 +7,9 @@ import (
 
 func main() {
 	r := ghw.New()
-	r.GET("/", func(c *ghw.Context) {
+	v1 := r.Group("/v1")
+	v1.Use()
+	v1.GET("/", func(c *ghw.Context) {
 		c.JSON(http.StatusOK, ghw.H{
 			"msg":     "200",
 			"context": "hello",
