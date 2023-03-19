@@ -68,7 +68,7 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	}
 }
 
-// serve static files
+// Static serve static files
 func (group *RouterGroup) Static(relativePath string, root string) {
 	handler := group.createStaticHandler(relativePath, http.Dir(root))
 	urlPattern := path.Join(relativePath, "/*filepath")
@@ -83,9 +83,6 @@ func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
 func (engine *Engine) LoadHTMLGlob(pattern string) {
 	engine.HTMLTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }
-func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
-	engine.router.addRoute(method, pattern, handler)
-}
 
 // GET 定义了添加 GET 请求方法
 func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
@@ -95,16 +92,6 @@ func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
 // POST  定义了添加 POST 请求方法
 func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
-}
-
-// GET 定义了添加 GET 请求方法
-func (engine *Engine) GET(pattern string, handler HandlerFunc) {
-	engine.addRoute("GET", pattern, handler)
-}
-
-// POST  定义了添加 POST 请求方法
-func (engine *Engine) POST(pattern string, handler HandlerFunc) {
-	engine.addRoute("POST", pattern, handler)
 }
 
 // Run 定义了开始HTTP服务的方法
